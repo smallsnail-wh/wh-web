@@ -6,7 +6,12 @@ import Vuex from 'vuex';
 import Util from './libs/util';
 import App from './app.vue';
 import 'iview/dist/styles/iview.css';
+import axios from 'axios';
+import VueAxios from 'vue-axios';
 
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.baseURL = '/wh';
+Vue.use(VueAxios,axios);
 
 Vue.use(VueRouter);
 Vue.use(Vuex);
