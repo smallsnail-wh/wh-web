@@ -57,34 +57,19 @@
     <div class="layout">
         <Row type="flex" style="position:absolute;left:0;top:0;width:100%;height:100%">
             <Col span="4" class="layout-menu-left">
-                <Menu active-name="1-2" theme="dark" width="auto" :open-names="['1']">
+                <Menu active-name="1-2" theme="dark" width="auto" :open-names="['1']" @on-select="m=>{select(m)}">
                     <div class="layout-logo-left">
                         <Input></Input>
                     </div>
-                    <Submenu name="1">
+                    <Submenu v-for="pmenu in menuList" :name="pmenu.id" :key="pmenu.id">
                         <template slot="title">
-                            <Icon type="ios-navigate"></Icon>
-                            Item 1
+                            <Icon :type="pmenu.icon"></Icon>
+                            {{pmenu.name}}
                         </template>
-                        <MenuItem name="1-1">Option 1</MenuItem>
-                        <MenuItem name="1-2">Option 2</MenuItem>
-                        <MenuItem name="1-3">Option 3</MenuItem>
-                    </Submenu>
-                    <Submenu name="2">
-                        <template slot="title">
-                            <Icon type="ios-keypad"></Icon>
-                            Item 2
-                        </template>
-                        <MenuItem name="2-1">Option 1</MenuItem>
-                        <MenuItem name="2-2">Option 2</MenuItem>
-                    </Submenu>
-                    <Submenu name="3">
-                        <template slot="title">
-                            <Icon type="ios-analytics"></Icon>
-                            Item 3
-                        </template>
-                        <MenuItem name="3-1">Option 1</MenuItem>
-                        <MenuItem name="3-2">Option 2</MenuItem>
+                        <MenuItem v-for="cmenu in pmenu.children" :name="cmenu.id" :key="cmenu.id">
+                            <Icon :type="cmenu.icon"></Icon>
+                            {{cmenu.name}}
+                        </MenuItem>
                     </Submenu>
                 </Menu>
             </Col>
@@ -101,7 +86,7 @@
                     </Breadcrumb>
                 </div>
                 <div class="layout-content">
-                    <div class="layout-content-main">Content</div>
+                    <router-view></router-view>
                 </div>
                 <div class="layout-copy">
                     2017-2018 &copy; smallsnail-wh
@@ -112,6 +97,34 @@
 </template>
 <script>
     export default {
-        
+        data(){
+            return {
+                menuList: [],
+                menuSub: []
+            }
+        },
+        mounted(){
+            this.axios({
+                method: 'get',
+                url: '/menu/2',
+                data: {}
+            }).then(function(response){
+                this.menuList = response.data;
+                for(var i in this.menuList){
+                    for(var j in this.menuList[i].children){
+                        this.menuSub.push(this.menuList[i].children[j]);
+                    }
+                }
+                console.log(this.menuSub);
+            }.bind(this)).catch(function(error){
+                console.log(error);
+            });
+        },
+        methods:{
+            select(e){
+                var filterMenus = this.menuSub.filter(function(menu){return (menu.url!=null && menu.url!='' && menu.id==e)});
+                this.$router.push(filterMenus[0].url);
+            }
+        }
     }
 </script>

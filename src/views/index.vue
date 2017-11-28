@@ -28,16 +28,16 @@
                         <li>
                             <dl>
                                 <FormItem prop="loginName" >
-                                    <Input  type="text" placeholder="登录名" >
+                                    <Input v-model="userName" type="text" placeholder="登录名" >
                                         <Icon type="ios-person-outline" slot="prepend" ></Icon>
                                     </Input>
                                 </FormItem>
                                 <FormItem prop="password">
-                                    <Input type="password" placeholder="密码" >
+                                    <Input v-model="password" type="password" placeholder="密码" >
                                     <Icon type="ios-locked-outline" slot="prepend"></Icon></Input>
                                 </FormItem>
                                 <FormItem>
-                                    <Button type="primary" @click="" style="width: 250px">登录</Button>
+                                    <Button type="primary" @click="login()" style="width: 250px">登录</Button>
                                 </FormItem>
                             </dl>
                         </li>
@@ -51,11 +51,25 @@
     export default {
         data(){
             return {
-
+                userName: null,
+                password: null
             }
         },
         methods: {
-            
+            login(){
+                this.axios({
+                    method: 'post',
+                    url: '/login',
+                    data: {
+                        "username": this.userName,
+                        "password": this.password
+                    }
+                }).then(function(response){
+
+                }.bind(this)).catch(function(error){
+                    console.log(error);
+                });
+            }
         }
     };
 </script>
