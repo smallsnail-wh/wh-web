@@ -39,7 +39,7 @@
         line-height: 40px; 
         border-radius: 20px;
         margin-top: 10px;
-        margin-right: 50px;
+        /*margin-right: 50px;*/
     }
     .layout-header strong{
         color: #ff5722;
@@ -76,7 +76,25 @@
             <Col span="20">
                 <div class="layout-header">
                     <strong>smallsnail-wh</strong>
-                    <img src="../../images/user.jpg"></img>
+                    <!-- <img src="../../images/user.jpg"></img>
+                    <Dropdown>
+                        <img src="../../images/user.jpg"></img>
+                        <DropdownMenu slot="list">
+                            <DropdownItem>驴打滚</DropdownItem>
+                            <DropdownItem>炸酱面</DropdownItem>
+                            <DropdownItem disabled>豆汁儿</DropdownItem>
+                            <DropdownItem>冰糖葫芦</DropdownItem>
+                            <DropdownItem divided>北京烤鸭</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown> -->
+                    <Dropdown trigger="click" style="margin-right: 20px">
+                        <img src="../../images/user.jpg"></img>
+                        <DropdownMenu slot="list">
+                            <DropdownItem>驴打</DropdownItem>
+                            <DropdownItem>炸酱</DropdownItem>
+                            <DropdownItem>豆汁</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 </div>
                 <div class="layout-breadcrumb">
                     <Breadcrumb>

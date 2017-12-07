@@ -51,24 +51,13 @@
     export default {
         data(){
             return {
-                userName: null,
-                password: null
+                userName: "test1",
+                password: "123"
             }
         },
         methods: {
             login(){
-                this.axios({
-                    method: 'post',
-                    url: '/login',
-                    data: {
-                        "username": this.userName,
-                        "password": this.password
-                    }
-                }).then(function(response){
-
-                }.bind(this)).catch(function(error){
-                    console.log(error);
-                });
+                this.$store.dispatch('userLogin',{"user_name":this.userName,"user_password":this.password,"router":this.$router});
             }
         }
     };

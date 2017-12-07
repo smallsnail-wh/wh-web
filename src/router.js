@@ -23,7 +23,8 @@ const routers = [
 	{
 	    path: '/base',
 	    meta: {
-	        title: 'base'
+	        title: 'base',
+	        requiresAuth: true
 	    },
 	    component: (resolve) => require(['./views/base/base.vue'], resolve),
 	    children: [

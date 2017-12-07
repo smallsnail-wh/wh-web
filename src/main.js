@@ -8,8 +8,10 @@ import App from './app.vue';
 import 'iview/dist/styles/iview.css';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import UsersModule from './store/modules/UsersModule';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Authorization'] = 'bearer '+ localStorage.getItem("currentUser_token");
 axios.defaults.baseURL = '/wh';
 Vue.use(VueAxios,axios);
 
@@ -28,6 +30,15 @@ const RouterConfig = {
 const router = new VueRouter(RouterConfig);
 
 router.beforeEach((to, from, next) => {
+    let token = window.localStorage.getItem('currentUser_token')
+    if (to.matched.some(record => record.meta.requiresAuth) && (!token || token === null)) {
+        next({
+          path: '/',
+          query: { redirect: to.fullPath }
+        })
+    } else {
+        next()
+    }
     iView.LoadingBar.start();
     Util.title(to.meta.title);
     next();
@@ -40,17 +51,39 @@ router.afterEach(() => {
 
 
 const store = new Vuex.Store({
+    modules: {
+        users:UsersModule
+    },
     state: {
-
+        todos: [
+          { id: 1, text: '...', done: true },
+          { id: 2, text: '...', done: false }
+        ],
+        count: 0
     },
     getters: {
-
+        doneTodos: state =>{
+            return state;
+        },
+        doneTodosCount: (state, getters) => {
+            return getters;
+        },
+        getTodoById: (state) => (id) => {
+            return state.todos.find(todo => todo.id === id)
+        }
     },
     mutations: {
-
+        add(state){
+            state.count++;
+        },
+        increment(state,number){
+            state.count+=number;
+        }
     },
     actions: {
-
+        increment(context){
+            context.commit('add');
+        }
     }
 });
 
