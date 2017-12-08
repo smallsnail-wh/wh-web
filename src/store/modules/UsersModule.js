@@ -19,6 +19,9 @@ export default {
             localStorage.setItem("currentUser_name",user_name);
             localStorage.setItem("currentUser_token",user_token);
             localStorage.setItem("currentUser_refresh_token",refresh_token);
+        },
+        loginOUt(state){
+            localStorage.clear();
         }
     },
     actions:{

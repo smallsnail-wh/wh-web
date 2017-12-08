@@ -13,6 +13,37 @@ import UsersModule from './store/modules/UsersModule';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Authorization'] = 'bearer '+ localStorage.getItem("currentUser_token");
 axios.defaults.baseURL = '/wh';
+
+/*axios.interceptors.request.use(
+    config => {
+        if (store.state.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+            config.headers.Authorization = 'bearer '+ localStorage.getItem("currentUser_token");
+        }
+        return config;
+    },
+    err => {
+        return Promise.reject(err);
+    });*/
+axios.interceptors.response.use(
+    response => {
+        return response;
+    },
+    error => {
+        if (error.response) {
+            switch (error.response.status) {
+                case 401:
+                    // 401 清除token信息并跳转到登录页面
+                    store.commit('loginOut');
+                    router.replace({
+                        path: '/',
+                        query: {redirect: router.currentRoute.fullPath}
+                    })
+            }
+        }
+        // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402
+        return Promise.reject(error.response.data)  // 返回接口返回的错误信息
+    });
+
 Vue.use(VueAxios,axios);
 
 Vue.use(VueRouter);

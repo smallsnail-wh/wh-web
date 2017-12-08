@@ -98,9 +98,9 @@
                 </div>
                 <div class="layout-breadcrumb">
                     <Breadcrumb>
-                        <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                        <BreadcrumbItem href="#">Projects</BreadcrumbItem>
-                        <BreadcrumbItem>iView</BreadcrumbItem>
+                        <BreadcrumbItem to="/base">Home</BreadcrumbItem>
+                        <BreadcrumbItem v-for="item in breadcrumbData" :to="item.url" :key="item.id">{{item.name}}</BreadcrumbItem>
+                        <!-- <BreadcrumbItem to="#">Home</BreadcrumbItem> -->
                     </Breadcrumb>
                 </div>
                 <div class="layout-content">
@@ -118,7 +118,9 @@
         data(){
             return {
                 menuList: [],
-                menuSub: []
+                menuSub: [],
+                /*面包屑data*/
+                breadcrumbData: []
             }
         },
         mounted(){
@@ -140,8 +142,10 @@
         },
         methods:{
             select(e){
+                console.log(this.menuSub);
                 var filterMenus = this.menuSub.filter(function(menu){return (menu.url!=null && menu.url!='' && menu.id==e)});
                 this.$router.push(filterMenus[0].url);
+                this.breadcrumbData.splice(0,1,filterMenus[0]);
             }
         }
     }
