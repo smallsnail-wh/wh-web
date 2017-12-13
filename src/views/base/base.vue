@@ -52,6 +52,10 @@
         border-radius: 3px;
         margin: 15px auto;
     }
+    .dropdown-menu{
+        text-align: center;
+        /*box-shadow: 0 1px 6px #00BCD4;*/
+    }
 </style>
 <template>
     <div class="layout">
@@ -75,24 +79,11 @@
             </Col>
             <Col span="20">
                 <div class="layout-header">
-                    <strong>smallsnail-wh</strong>
-                    <!-- <img src="../../images/user.jpg"></img>
-                    <Dropdown>
+                    <Strong>{{userName}}</Strong>
+                    <Dropdown trigger="click" style="margin-right: 50px" @on-click="m=>{dropdownSelect(m)}">
                         <img src="../../images/user.jpg"></img>
-                        <DropdownMenu slot="list">
-                            <DropdownItem>驴打滚</DropdownItem>
-                            <DropdownItem>炸酱面</DropdownItem>
-                            <DropdownItem disabled>豆汁儿</DropdownItem>
-                            <DropdownItem>冰糖葫芦</DropdownItem>
-                            <DropdownItem divided>北京烤鸭</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown> -->
-                    <Dropdown trigger="click" style="margin-right: 20px">
-                        <img src="../../images/user.jpg"></img>
-                        <DropdownMenu slot="list">
-                            <DropdownItem>驴打</DropdownItem>
-                            <DropdownItem>炸酱</DropdownItem>
-                            <DropdownItem>豆汁</DropdownItem>
+                        <DropdownMenu class="dropdown-menu" slot="list">
+                            <DropdownItem>退出</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -117,6 +108,8 @@
     export default {
         data(){
             return {
+                /*用户名*/
+                userName: null,
                 menuList: [],
                 menuSub: [],
                 /*面包屑data*/
@@ -124,6 +117,8 @@
             }
         },
         mounted(){
+            /*this.$router.push();*/
+            this.userName = window.localStorage.getItem("currentUser_name");
             this.axios({
                 method: 'get',
                 url: '/menu/2',
@@ -135,17 +130,19 @@
                         this.menuSub.push(this.menuList[i].children[j]);
                     }
                 }
-                console.log(this.menuSub);
             }.bind(this)).catch(function(error){
                 console.log(error);
             });
         },
         methods:{
             select(e){
-                console.log(this.menuSub);
                 var filterMenus = this.menuSub.filter(function(menu){return (menu.url!=null && menu.url!='' && menu.id==e)});
                 this.$router.push(filterMenus[0].url);
                 this.breadcrumbData.splice(0,1,filterMenus[0]);
+            },
+            /*下拉菜单选择事件*/
+            dropdownSelect(e){
+                this.$store.dispatch('users/loginOUt',{"router":this.$router});
             }
         }
     }

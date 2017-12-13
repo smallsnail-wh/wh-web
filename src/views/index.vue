@@ -21,23 +21,23 @@
 <template>
     <div class="index">
         <div id="index_pc_bj">
-            <Form ref="formLogin">
+            <Form ref="formLogin" :model="formLogin" :rules="ruleLogin">
                 <div class="wrap_conter">
                     <ul>
                         <li><h2>用户登录</h2></li>
                         <li>
                             <dl>
-                                <FormItem prop="loginName" >
-                                    <Input v-model="userName" type="text" placeholder="登录名" >
+                                <FormItem prop="userName" >
+                                    <Input v-model="formLogin.userName" type="text" placeholder="登录名" >
                                         <Icon type="ios-person-outline" slot="prepend" ></Icon>
                                     </Input>
                                 </FormItem>
                                 <FormItem prop="password">
-                                    <Input v-model="password" type="password" placeholder="密码" >
+                                    <Input v-model="formLogin.password" type="password" placeholder="密码" >
                                     <Icon type="ios-locked-outline" slot="prepend"></Icon></Input>
                                 </FormItem>
                                 <FormItem>
-                                    <Button type="primary" @click="login()" style="width: 250px">登录</Button>
+                                    <Button type="primary" @click="login('formLogin')" style="width: 250px">登录</Button>
                                 </FormItem>
                             </dl>
                         </li>
@@ -51,13 +51,27 @@
     export default {
         data(){
             return {
-                userName: "test1",
-                password: "123"
+                formLogin:{
+                    userName: null,
+                    password: null
+                },
+                ruleLogin: {
+                        userName: [
+                            { required: true, message: '请填写用户名', trigger: 'blur' }
+                        ],
+                        password: [
+                            { required: true, message: '请填写密码', trigger: 'blur' },
+                        ]
+                }
             }
         },
         methods: {
-            login(){
-                this.$store.dispatch('userLogin',{"user_name":this.userName,"user_password":this.password,"router":this.$router});
+            login(formLogin){
+                this.$refs[formLogin].validate((valid) => {
+                    if(valid){
+                        this.$store.dispatch('users/userLogin',{"user_name":this.formLogin.userName,"user_password":this.formLogin.password,"router":this.$router});
+                    }
+                })
             }
         }
     };

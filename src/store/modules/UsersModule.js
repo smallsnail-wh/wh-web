@@ -1,5 +1,7 @@
 import axios from 'axios';
+import iView from 'iview';
 export default {
+    namespaced: true,
     state:{
         currentUser:{
             get UserName(){
@@ -20,7 +22,7 @@ export default {
             localStorage.setItem("currentUser_token",user_token);
             localStorage.setItem("currentUser_refresh_token",refresh_token);
         },
-        loginOUt(state){
+        clearUser(state){
             localStorage.clear();
         }
     },
@@ -46,9 +48,13 @@ export default {
                 axios.defaults.headers.common['Authorization'] = 'bearer '+ localStorage.getItem("currentUser_token");
                 router.push({ path: 'base' }) ;
                 /*this.$route.router.push({ path: '/base' });*/
-            }.bind(this)).catch(function(error){
-                console.log(error);
+            }).catch(function(error){
+                iView.Message.error('用户名或密码错误！');
             });
+        },
+        loginOUt(context,{router}){
+            router.push({ path: '/' }) ;
+            context.commit('clearUser');
         }
     }
 }
