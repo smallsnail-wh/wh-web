@@ -48,9 +48,17 @@
     .layout-logo-left{
         width: 90%;
         height: 30px;
-        background: #5b6270;
+        /*background: #5b6270;*/
         border-radius: 3px;
         margin: 15px auto;
+    }
+    .layout-logo-left img{
+        width: 20%;
+        height: 100%;
+    }
+    .layout-logo-left strong{
+        color: #00bcd4;
+        font-size:10px;
     }
     .dropdown-menu{
         text-align: center;
@@ -61,10 +69,11 @@
     <div class="layout">
         <Row type="flex" style="position:absolute;left:0;top:0;width:100%;height:100%">
             <Col span="4" class="layout-menu-left">
-                <Menu active-name="1-2" theme="dark" width="auto" :open-names="['1']" @on-select="m=>{select(m)}">
-                    <div class="layout-logo-left">
-                        <Input></Input>
+                <div class="layout-logo-left">
+                        <img src="../../images/logo.jpg"></img>
+                        <strong>smallsnail-Wh</strong>
                     </div>
+                <Menu active-name="1-2" theme="dark" width="auto" :open-names="['1']" @on-select="m=>{select(m)}">
                     <Submenu v-for="pmenu in menuList" :name="pmenu.id" :key="pmenu.id">
                         <template slot="title">
                             <Icon :type="pmenu.icon"></Icon>
@@ -79,7 +88,7 @@
             </Col>
             <Col span="20">
                 <div class="layout-header">
-                    <Strong>{{userName}}</Strong>
+                    <strong>{{userName}}</strong>
                     <Dropdown trigger="click" style="margin-right: 50px" @on-click="m=>{dropdownSelect(m)}">
                         <img src="../../images/user.jpg"></img>
                         <DropdownMenu class="dropdown-menu" slot="list">
@@ -91,7 +100,6 @@
                     <Breadcrumb>
                         <BreadcrumbItem to="/base">Home</BreadcrumbItem>
                         <BreadcrumbItem v-for="item in breadcrumbData" :to="item.url" :key="item.id">{{item.name}}</BreadcrumbItem>
-                        <!-- <BreadcrumbItem to="#">Home</BreadcrumbItem> -->
                     </Breadcrumb>
                 </div>
                 <div class="layout-content">
@@ -118,10 +126,19 @@
         },
         mounted(){
             /*this.$router.push();*/
-            this.userName = window.localStorage.getItem("currentUser_name");
+            /*this.userName = window.localStorage.getItem("currentUser_name");*/
             this.axios({
                 method: 'get',
-                url: '/menu/2',
+                url: '/user/'+window.localStorage.getItem("currentUser_name"),
+                data: {}
+            }).then(function(response){
+                this.userName = response.data.name;
+            }.bind(this)).catch(function(error){
+                console.log(error);
+            });
+            this.axios({
+                method: 'get',
+                url: '/menu/'+window.localStorage.getItem("currentUser_name"),
                 data: {}
             }).then(function(response){
                 this.menuList = response.data;
