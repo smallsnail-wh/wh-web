@@ -36,27 +36,27 @@ const routers = [
 	    component: (resolve) => require(['./views/base/base.vue'], resolve),
 	    children: [
 	    	{
-	    		path: 'test1',
-                name: 'test1',
-                component: (resolve) => require(['./views/test/test1.vue'], resolve),
+	    		path: 'user',
+                name: 'user',
+                component: (resolve) => require(['./views/sys/user.vue'], resolve),
                 meta: {
-                    title:"test1"
+                    title:"user"
                 }
 	    	},
 	    	{
-	    		path: 'test2',
-                name: 'test2',
-                component: (resolve) => require(['./views/test/test2.vue'], resolve),
+	    		path: 'menu',
+                name: 'menu',
+                component: (resolve) => require(['./views/sys/menu.vue'], resolve),
                 meta: {
-                    title:"test2"
+                    title:"menu"
                 }
 	    	},
 	    	{
-	    		path: 'test3',
-                name: 'test3',
-                component: (resolve) => require(['./views/test/test3.vue'], resolve),
+	    		path: 'role',
+                name: 'role',
+                component: (resolve) => require(['./views/sys/role.vue'], resolve),
                 meta: {
-                    title:"test3"
+                    title:"role"
                 }
 	    	},
 	    	{

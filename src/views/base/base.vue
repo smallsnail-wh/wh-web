@@ -129,8 +129,7 @@
             /*this.userName = window.localStorage.getItem("currentUser_name");*/
             this.axios({
                 method: 'get',
-                url: '/user/'+window.localStorage.getItem("currentUser_name"),
-                data: {}
+                url: '/user/'+window.localStorage.getItem("currentUser_name")
             }).then(function(response){
                 this.userName = response.data.name;
             }.bind(this)).catch(function(error){
@@ -139,7 +138,6 @@
             this.axios({
                 method: 'get',
                 url: '/menu/'+window.localStorage.getItem("currentUser_name"),
-                data: {}
             }).then(function(response){
                 this.menuList = response.data;
                 for(var i in this.menuList){
