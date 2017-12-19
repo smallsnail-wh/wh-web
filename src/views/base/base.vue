@@ -3,13 +3,19 @@
         border: 1px solid #d7dde4;
         background: #e9eaec;
         /*position: relative;*/
-        position:absolute;left:0;top:0;width:100%;height:100%
+        position:absolute;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        overflow:auto;
     }
     .layout-breadcrumb{
         padding: 10px 15px 0;
     }
     .layout-content{
-        height: 80%;
+        /*height: 80%;*/
+        /*min-height: 100%;*/
         margin: 15px;
         overflow: hidden;
         background: #f8f8f9;
@@ -68,7 +74,7 @@
 </style>
 <template>
     <div class="layout">
-        <Row type="flex" style="position:absolute;left:0;top:0;width:100%;height:100%">
+        <Row type="flex" style="position:absolute;left:0;top:0;width:100%;">
             <Col span="4" class="layout-menu-left">
                 <div class="layout-logo-left">
                         <img src="../../images/logo.jpg"></img>
