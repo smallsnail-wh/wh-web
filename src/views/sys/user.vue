@@ -3,7 +3,7 @@
         <div>
             <Row style="margin-bottom: 25px;">
                 <Col span="8">登录名：
-                	<Input v-model="loginName" placeholder="请输入..." style="width:200px"></Input>
+                	<Input v-model="loginName" placeholder="请输入..." style="width:250px"></Input>
                 </Col>
                 <Col span="8"><Button type="primary" shape="circle" icon="ios-search" @click="search()">搜索</Button></Col>
             </Row>
@@ -100,7 +100,7 @@
 	export default {
         data () {
             return {
-                /*用于查找的品牌名称*/
+                /*用于查找的登录名*/
                 loginName:null,
             	/*选择的数量*/
                 count:null,

@@ -36,6 +36,14 @@ const routers = [
 	    component: (resolve) => require(['./views/base/base.vue'], resolve),
 	    children: [
 	    	{
+	    		path: 'welcome',
+                name: 'welcome',
+                component: (resolve) => require(['./views/sys/welcome.vue'], resolve),
+                meta: {
+                    title:"welcome"
+                }
+	    	},
+	    	{
 	    		path: 'user',
                 name: 'user',
                 component: (resolve) => require(['./views/sys/user.vue'], resolve),

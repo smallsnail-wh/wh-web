@@ -1,7 +1,7 @@
 <style scoped>
     .layout{
         border: 1px solid #d7dde4;
-        background: #bbbec4;
+        background: #e9eaec;
         /*position: relative;*/
         position:absolute;left:0;top:0;width:100%;height:100%
     }
@@ -14,6 +14,7 @@
         overflow: hidden;
         background: #f8f8f9;
         border-radius: 4px;
+        box-shadow: 1px 1px 1px 1px  rgba(0,0,0,.1);
     }
     .layout-content-main{
         padding: 10px;
@@ -29,7 +30,7 @@
     }
     .layout-header{
         height: 60px;
-        background: #464c5b;
+        background: #f8f8f9;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
         text-align: right;
     }
@@ -98,7 +99,7 @@
                 </div>
                 <div class="layout-breadcrumb">
                     <Breadcrumb>
-                        <BreadcrumbItem to="/base">Home</BreadcrumbItem>
+                        <BreadcrumbItem to="/base/welcome">Home</BreadcrumbItem>
                         <BreadcrumbItem v-for="item in breadcrumbData" :to="item.url" :key="item.id">{{item.name}}</BreadcrumbItem>
                     </Breadcrumb>
                 </div>
@@ -118,7 +119,9 @@
             return {
                 /*用户名*/
                 userName: null,
+                /*一级菜单*/
                 menuList: [],
+                /*二级菜单*/
                 menuSub: [],
                 /*面包屑data*/
                 breadcrumbData: []
@@ -150,6 +153,7 @@
             });
         },
         methods:{
+            /*菜单选择事件*/
             select(e){
                 var filterMenus = this.menuSub.filter(function(menu){return (menu.url!=null && menu.url!='' && menu.id==e)});
                 this.$router.push(filterMenus[0].url);

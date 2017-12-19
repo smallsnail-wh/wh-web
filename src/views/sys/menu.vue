@@ -2,8 +2,10 @@
 	<div style="margin: 20px;">
         <div>
             <Row style="margin-bottom: 25px;">
-                <Col span="8">登录名：
-                	<Input v-model="loginName" placeholder="请输入..." style="width:200px"></Input>
+                <Col span="8">菜单名称：
+                    <Select v-model="menuId" filterable clearable style="width: 200px">
+                        <Option v-for="item in menuList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
                 </Col>
                 <Col span="8"><Button type="primary" shape="circle" icon="ios-search" @click="search()">搜索</Button></Col>
             </Row>
@@ -28,43 +30,46 @@
             </ul>
         </div>
         <!--添加modal-->  
-        <Modal :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('userNew')" @on-cancel="cancel()">
-            <Form ref="userNew" :model="userNew" :rules="ruleNodeNew" :label-width="80" >
+        <Modal :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('menuNew')" @on-cancel="cancel()">
+            <Form ref="menuNew" :model="menuNew" :rules="ruleNodeNew" :label-width="80" >
                 <Row>
                     <Col span="12">
-                        <Form-item label="登录名:" prop="loginName">
-                            <Input v-model="userNew.loginName" style="width: 204px"/>
+                        <Form-item label="菜单名称:" prop="name">
+                            <Input v-model="menuNew.name" style="width: 204px"/>
                         </Form-item>
                     </Col>
                     <Col span="12">
-                        <Form-item label="用户名:" prop="name">
-                            <Input v-model="userNew.name" style="width: 204px"/>
+                        <Form-item label="路径:" prop="url">
+                            <Input v-model="menuNew.url" style="width: 204px"/>
                         </Form-item>
                     </Col>
                 </Row>
                 <Row>
                     <Col span="12">
-                        <Form-item label="密码:" prop="password">
-                            <Input v-model="userNew.password" type="password" style="width: 204px"/>
+                        <Form-item label="父类ID:" prop="parentId">
+                            <Input type="text" v-model="menuNew.parentId" style="width: 204px"/>
                         </Form-item>
                     </Col>
                     <Col span="12">
-                        <Form-item label="确认密码:" prop="passwordAgain">
-                            <Input v-model="userNew.passwordAgain" type="password" style="width: 204px"/>
+                        <Form-item label="排序号:" prop="sort">
+                            <Input v-model="menuNew.sort" style="width: 204px"/>
                         </Form-item>
                     </Col>
                 </Row>
                 <Row>
                     <Col span="12">
-                        <Form-item label="邮箱:" prop="email">
-                            <Input v-model="userNew.email" style="width: 204px"/>
+                        <Form-item label="图标:" prop="icon">
+                            <Input v-model="menuNew.icon" style="width: 204px"/>
                         </Form-item>
                     </Col>
                 </Row>
+                <Form-item label="描述:" prop="remark">
+                     <Input v-model="menuNew.remark" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
+                </Form-item>
             </Form>
         </Modal>
         <!--修改modal-->  
-        <Modal :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('userModify')" @on-cancel="cancel()">
+        <!-- <Modal :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('userModify')" @on-cancel="cancel()">
              <Form ref="userModify" :model="userModify" :rules="ruleNodeModify" :label-width="80" >
                 <Row>
                     <Col span="12">
@@ -93,15 +98,15 @@
                     </Col>
                 </Row>
             </Form>
-        </Modal>
+        </Modal> -->
     </div>
 </template>
 <script>
 	export default {
         data () {
             return {
-                /*用于查找的品牌名称*/
-                loginName:null,
+                /*用于查找的菜单id*/
+                menuId:null,
             	/*选择的数量*/
                 count:null,
             	/*选中的组数据*/
@@ -119,54 +124,63 @@
                 	page:0,
                 	pageSize:10
                 },
-                /*user实体*/
-                user:{
+                /*menu实体*/
+                menu:{                             
                     id:null,
                     name:null,
-                    loginName:null,
-                    password:null,
-                    passwordAgain:null,
-                    email:null
+                    url:null,
+                    parentId:null,
+                    sort:null,
+                    remark:null,
+                    icon:null
                 },
-                /*用于添加的user实体*/
-                userNew:{
+                /*用于添加的menu实体*/
+                menuNew:{
                 	id:null,
-					name:null,
-					loginName:null,
-					password:null,
-                    passwordAgain:null,
-					email:null
+                    name:null,
+                    url:null,
+                    parentId:null,
+                    sort:null,
+                    remark:null,
+                    icon:null
                 },
-                /*用于修改的user实体*/
-                userModify:{
+                /*用于修改的menu实体*/
+                menuModify:{
                 	id:null,
-					name:null,
-					loginName:null,
-					password:null,
-					email:null
+                    name:null,
+                    url:null,
+                    parentId:null,
+                    sort:null,
+                    remark:null,
+                    icon:null
                 },
                 /*新建验证*/
                 ruleNodeNew:{
                     name: [
                         { type:'string',required: true, message: '输入用户民', trigger: 'blur' }
                     ],
-                    loginName: [
+                    url: [
                         { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
                     ],
-                    password: [
-                        { type:'string',required: true, message: '输入密码', trigger: 'blur' }
+                    parentId: [
+                        { required: true, message: '输入父类ID', trigger: 'blur' },
+                        { type:'number', message: '输入数字', trigger: 'blur' }
                     ],
-                    passwordAgain: [
-                        { type:'string',required: true, message: '输入再次密码', trigger: 'blur' }
+                    sort: [
+                        /*{ required: true, message: '输入排序', trigger: 'blur' },*/
+                        { type:'number', message: '输入数字', trigger: 'blur' }
                     ],
-                    email: [
-                        { required: true, message: '输入邮箱', trigger: 'blur' },
-                        { type:'email', message: '输入正确的邮箱格式', trigger: 'blur' }
+                    icon: [
+                        { type:'string',required: true, message: '输入图标', trigger: 'blur' }
+                    ],
+
+                    remark: [
+                        { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
                     ]
                 },
                 /*修改验证*/
                 ruleNodeModify:{
-                    name: [
+                    /*name: [
                         { type:'string',required: true, message: '输入用户民', trigger: 'blur' }
                     ],
                     loginName: [
@@ -178,8 +192,10 @@
                     email: [
                         { required: true, message: '输入邮箱', trigger: 'blur' },
                         { type:'email', message: '输入正确的邮箱格式', trigger: 'blur' }
-                    ]
+                    ]*/
                 },
+                /*菜单列表*/
+                menuList:[],
             	/*生产类型表显示字段*/
             	columns1: [
                     {
@@ -188,16 +204,28 @@
                         align: 'center'
                     },
                     {
-                        title: '登录名',
-                        key: 'loginName'
+                        title: '菜单ID',
+                        key: 'id'
                     },
                     {
-                        title: '用户名',
+                        title: '菜单名称',
                         key: 'name'
                     },
                     {
-                        title: '邮箱',
-                        key: 'email'
+                        title: '地址',
+                        key: 'url'
+                    },
+                    {
+                        title: '上级菜单id',
+                        key: 'parentId'
+                    },
+                    {
+                        title: '排序',
+                        key: 'sort'
+                    },
+                    {
+                        title: '图标',
+                        key: 'icon'
                     },
                     {
                         title: ' ',      
@@ -212,7 +240,24 @@
         	/*页面初始化调用方法*/
             this.getTable({
                 "pageInfo":this.pageInfo,
-                "loginName":this.loginName
+                'menuId':this.menuId
+            });
+            this.axios({
+              method: 'get',
+              url: '/menus/parentId',
+              params: {
+                'parentId': 0 
+              }
+            }).then(function (response) {
+                var listTemp = response.data;
+                for (var i = 0; i < listTemp.length; i++) {
+                    this.menuList.push({
+                        "value": listTemp[i].id,
+                        "label": listTemp[i].name
+                    });
+                }
+            }.bind(this)).catch(function (error) {
+              alert(error);
             });
         },
         methods:{
@@ -221,65 +266,75 @@
         		this.pageInfo.page = 0;
         		this.pageInfo.pageSize = 10;
         	},
-            /*user实体初始化*/
-            initUser(){
-                this.user.id = null;
-                this.user.name = null;
-                this.user.loginName = null;
-                this.user.password = null;
-                this.user.email = null;
+            /*menu实体初始化*/
+            initMenu(){
+                this.menu.id = null;
+                this.menu.name = null;
+                this.menu.url = null;
+                this.menu.parentId = null;
+                this.menu.sort = null;
+                this.menu.remark = null;
+                this.menu.icon = null;
             },
-            /*userNew实体初始化*/
-            initUserNew(){
-                this.userNew.id = null;
-                this.userNew.name = null;
-                this.userNew.loginName = null;
-                this.userNew.password = null;
-                this.userNew.passwordAgain = null;
-                this.userNew.email = null;
+            /*menuNew实体初始化*/
+            initMenuNew(){
+                this.menuNew.id = null;
+                this.menuNew.name = null;
+                this.menuNew.url = null;
+                this.menuNew.parentId = null;
+                this.menuNew.sort = null;
+                this.menuNew.remark = null;
+                this.menuNew.icon = null;
             },
-            /*userModify实体初始化*/
-            initUserModify(){
-                this.userModify.id = null;
-                this.userModify.name = null;
-                this.userModify.loginName = null;
-                this.userModify.password = null;
-                this.userModify.email = null;
+            /*menuModify实体初始化*/
+            initMenuModify(){
+                this.menuModify.id = null;
+                this.menuModify.name = null;
+                this.menuModify.url = null;
+                this.menuModify.parentId = null;
+                this.menuModify.sort = null;
+                this.menuModify.remark = null;
+                this.menuModify.icon = null;
             },
-            /*userNew设置*/
-            userSet(e){
-                this.user.id = e.id;
-                this.user.name = e.name;
-                this.user.loginName = e.loginName;
-                this.user.password = e.password;
-                this.user.email = e.email;
+            /*menuNew设置*/
+            menuSet(e){
+                this.menu.id = e.id;
+                this.menu.name = e.name;
+                this.menu.url = e.url;
+                this.menu.parentId = e.parentId;
+                this.menu.sort = e.sort;
+                this.menu.remark = e.remark;
+                this.menu.icon = e.icon;
             },
-            /*userNew设置*/
-            userNewSet(e){
-                this.userNew.id = e.id;
-                this.userNew.name = e.name;
-                this.userNew.loginName = e.loginName;
-                this.userNew.password = e.password;
-                this.userNew.passwordAgain = e.password;
-                this.userNew.email = e.email;
+            /*menuNew设置*/
+            menuNewSet(e){
+                this.menuNew.id = e.id;
+                this.menuNew.name = e.name;
+                this.menuNew.url = e.url;
+                this.menuNew.parentId = e.parentId;
+                this.menuNew.sort = e.sort;
+                this.menuNew.remark = e.remark;
+                this.menuNew.icon = e.icon;
             },
-            /*userModify设置*/
-            userModifySet(e){
-                this.userModify.id = e.id;
-                this.userModify.name = e.name;
-                this.userModify.loginName = e.loginName;
-                this.userModify.password = e.password;
-                this.userModify.email = e.email;
+            /*menuModify设置*/
+            menuModifySet(e){
+                this.menuModify.id = e.id;
+                this.menuModify.name = e.name;
+                this.menuModify.url = e.url;
+                this.menuModify.parentId = e.parentId;
+                this.menuModify.sort = e.sort;
+                this.menuModify.remark = e.remark;
+                this.menuModify.icon = e.icon;
             },
             /*得到表数据*/
             getTable(e) {
                 this.axios({
                   method: 'get',
-                  url: '/users',
+                  url: '/menus',
                   params: {
                     'page':e.pageInfo.page,
                     'pageSize':e.pageInfo.pageSize,
-                    'loginName':e.loginName
+                    'menuId':e.menuId
                   }
                 }).then(function (response) {
                     this.data1=response.data.data;
@@ -293,7 +348,7 @@
                 this.initPageInfo();
                 this.getTable({
                     "pageInfo":this.pageInfo,
-                    "loginName":this.loginName
+                    'menuId':this.menuId
                 });   
             },
             /*分页点击事件*/
@@ -301,13 +356,13 @@
                 this.pageInfo.page = e-1;
                 this.getTable({  
                     "pageInfo":this.pageInfo,
-                    "loginName":this.loginName
+                    'menuId':this.menuId
                 });
             },
             /*新建点击触发事件*/
             openNewModal(){
                 this.newModal = true;
-                this.initUserNew();
+                this.initMenuNew();
                 this.data1.sort();
                 this.count = 0;
                 this.groupId = null;
@@ -327,7 +382,7 @@
                                 this.initUserNew();
                                 this.getTable({
                                     "pageInfo":this.pageInfo,
-                                    "loginName":this.loginName
+                                    'menuId':this.menuId
                                 });
                                 this.$Message.info('新建成功');
                             }.bind(this)).catch(function (error) {
@@ -375,7 +430,7 @@
                             this.initUserNew();
                             this.getTable({
                                 "pageInfo":this.pageInfo,
-                                "loginName":this.loginName
+                                'menuId':this.menuId
                             });
                             this.$Message.info('修改成功');
                         }.bind(this)).catch(function (error) {
@@ -422,7 +477,7 @@
                     }).then(function (response) {
                         this.getTable({
                             "pageInfo":this.pageInfo,
-                            "loginName":this.loginName
+                            'menuId':this.menuId
                         });
                         this.groupId=null;
                         this.count=0;
