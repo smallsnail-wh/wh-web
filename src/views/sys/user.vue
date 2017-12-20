@@ -94,12 +94,20 @@
                 </Row>
             </Form>
         </Modal>
+        <!--配置角色modal-->  
+        <Modal v-model="roleModal" width="800" title="角色配置" @on-ok="roleOk()" @on-cancel="cancel()">
+            <div>
+                <Table border :columns="columns2" :data="data2" :height="260"  @on-selection-change="s=>{change2(s)}"></Table>
+            </div>
+        </Modal>
     </div>
 </template>
 <script>
 	export default {
         data () {
             return {
+                /*用户与角色关系列表*/
+                relationList:null,
                 /*用于查找的登录名*/
                 loginName:null,
             	/*选择的数量*/
@@ -110,6 +118,8 @@
                 newModal:false,
                 /*修改modal的显示参数*/
                 modifyModal:false,
+                /*角色配置modal的显示参数*/
+                roleModal:false,
             	/*分页total属性绑定值*/
                 total:0,
                 /*loading*/
@@ -180,7 +190,7 @@
                         { type:'email', message: '输入正确的邮箱格式', trigger: 'blur' }
                     ]
                 },
-            	/*生产类型表显示字段*/
+            	/*表显示字段*/
             	columns1: [
                     {
                         type: 'selection',
@@ -198,10 +208,47 @@
                     {
                         title: '邮箱',
                         key: 'email'
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        key: 'action',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'info',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.relationSet(params.row);
+                                        }
+                                    }
+                                },'配置角色')
+                            ]);
+                        }
+                    },
+                ],
+                /*表数据*/
+                data1: [],
+                /*表显示字段*/
+                columns2: [
+                    {
+                        type: 'selection',
+                        width: 60,
+                        align: 'center'
+                    },
+                    {
+                        title: '角色名称',
+                        key: 'name'
+                    },
+                    {
+                        title: '描述',
+                        key: 'describe'
                     }
                 ],
-                /*生产类型表数据*/
-                data1: []
+                /*表数据*/
+                data2: []
             }
         },
         mounted(){
@@ -209,6 +256,15 @@
             this.getTable({
                 "pageInfo":this.pageInfo,
                 "loginName":this.loginName
+            });
+            this.axios({
+              method: 'get',
+              url: '/roles/all'
+            }).then(function (response) {
+                this.data2 = response.data;
+                console.log(response);
+            }.bind(this)).catch(function (error) {
+              alert(error);
             });
         },
         methods:{
@@ -433,6 +489,46 @@
                 this.userModifySet(e);
                 this.modifyModal = true;
                 this.data1.sort();
+            },
+            /*流程配置*/
+            relationSet(e){
+                this.roleModal = true;
+                this.axios({
+                  method: 'get',
+                  url: '/relations/'+e.id
+                }).then(function (response) {
+                    console.log(response);    
+                }.bind(this)).catch(function (error) {
+                  alert(error);
+                });
+
+                /*this.initPdtMap();
+                this.data2=[];
+                this.product.pdtId = e.row.pdtId;
+                this.product.pdtCode = e.row.pdtCode;
+                this.product.pdtName = e.row.pdtName;
+                this.product.pdtType = e.row.pdtType;
+                this.pdtMap.id = e.row.pdtId;
+                this.pdtMap.type = e.row.pdtType;
+                this.modal = true;
+                this.axios({
+                  method: 'post',
+                  url: '/producing/pdtProcedure!procedureList.do',
+                  data: {
+                    "pdtMap": this.pdtMap
+                  },
+                  dataType:'json'
+                }).then(function (response) {
+                    this.data2=response.data.json.data.data;    
+                }.bind(this)).catch(function (error) {
+                  alert(error);
+                });*/
+            },
+            roleOk(){
+
+            },
+            change2(e){
+
             }
         }
     }

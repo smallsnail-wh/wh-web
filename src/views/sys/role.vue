@@ -317,11 +317,8 @@
             },
             /*修改modal的modifyOk点击事件*/
              modifyOk (roleModify) { 
-                console.log("1");
                 this.$refs[roleModify].validate((valid) => {
-                    console.log("2");
                     if (valid) {
-                        console.log("3");
                         this.initRole();
                         this.roleSet(this.roleModify);
                         this.axios({
@@ -329,7 +326,7 @@
                           url: '/roles/'+this.role.id,
                           data: this.role
                         }).then(function (response) {
-                            this.initRoleNew();
+                            this.initRoleModify();
                             this.getTable({
                                 "pageInfo":this.pageInfo
                             });
@@ -339,7 +336,6 @@
                         });  
                         this.modifyModal = false;
                     }else {
-                        console.log("4");
                         this.$Message.error('表单验证失败!');
                         setTimeout(() => {
                             this.loading = false;
@@ -376,7 +372,29 @@
             },
             /*配置权限的settingOk点击事件*/
             settingOk(){
-                console.log(this.moduleArr);
+                var temp = "";
+                for(var i in this.moduleArr){
+                    if(this.moduleArr[i] != '' && this.moduleArr != null){
+                        temp = temp + this.moduleArr[i]+";";
+                    }
+                }
+                this.roleModify.modules = temp;
+                this.initRole();
+                this.roleSet(this.roleModify);
+                this.axios({
+                  method: 'put',
+                  url: '/roles/'+this.role.id,
+                  data: this.role
+                }).then(function (response) {
+                    this.initRoleModify();
+                    this.getTable({
+                        "pageInfo":this.pageInfo
+                    });
+                    this.$Message.info('配置成功');
+                }.bind(this)).catch(function (error) {
+                  alert(error);
+                });
+                console.log(this.roleModify);
             },
             /*modal的cancel点击事件*/
             cancel () {
