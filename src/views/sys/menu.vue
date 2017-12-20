@@ -19,7 +19,7 @@
                 </li>
                 <li>
                     <div style="padding: 10px 0;">
-                    	<Table :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
+                    	<Table border :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
                     </div> 
                 </li>
                 <li>
@@ -30,8 +30,8 @@
             </ul>
         </div>
         <!--添加modal-->  
-        <Modal :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('menuNew')" @on-cancel="cancel()">
-            <Form ref="menuNew" :model="menuNew" :rules="ruleNodeNew" :label-width="80" >
+        <Modal :mask-closable="false" :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('menuNew')" @on-cancel="cancel()">
+            <Form ref="menuNew" :model="menuNew" :rules="ruleNew" :label-width="80" >
                 <Row>
                     <Col span="12">
                         <Form-item label="菜单名称:" prop="name">
@@ -47,7 +47,7 @@
                 <Row>
                     <Col span="12">
                         <Form-item label="父类ID:" prop="parentId">
-                            <Input type="text" v-model="menuNew.parentId" style="width: 204px"/>
+                            <Input v-model="menuNew.parentId" style="width: 204px"/>
                         </Form-item>
                     </Col>
                     <Col span="12">
@@ -69,36 +69,44 @@
             </Form>
         </Modal>
         <!--修改modal-->  
-        <!-- <Modal :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('userModify')" @on-cancel="cancel()">
-             <Form ref="userModify" :model="userModify" :rules="ruleNodeModify" :label-width="80" >
+        <Modal :mask-closable="false" :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('menuModify')" @on-cancel="cancel()">
+            <Form ref="menuModify" :model="menuModify" :rules="ruleModify" :label-width="80" >
                 <Row>
                     <Col span="12">
-                        <Form-item label="登录名:" prop="loginName">
-                            <Input v-model="userModify.loginName" style="width: 204px"/>
+                        <Form-item label="菜单名称:" prop="name">
+                            <Input v-model="menuModify.name" style="width: 204px"/>
                         </Form-item>
                     </Col>
                     <Col span="12">
-                        <Form-item label="用户名:" prop="name">
-                            <Input v-model="userModify.name" style="width: 204px"/>
+                        <Form-item label="路径:" prop="url">
+                            <Input v-model="menuModify.url" style="width: 204px"/>
                         </Form-item>
                     </Col>
                 </Row>
                 <Row>
                     <Col span="12">
-                        <Form-item label="密码:" prop="password">
-                            <Input v-model="userModify.password" type="password" style="width: 204px"/>
+                        <Form-item label="父类ID:" prop="parentId">
+                            <Input v-model="menuModify.parentId" style="width: 204px"/>
+                        </Form-item>
+                    </Col>
+                    <Col span="12">
+                        <Form-item label="排序号:" prop="sort">
+                            <Input v-model="menuModify.sort" style="width: 204px"/>
                         </Form-item>
                     </Col>
                 </Row>
                 <Row>
                     <Col span="12">
-                        <Form-item label="邮箱:" prop="email">
-                            <Input v-model="userModify.email" style="width: 204px"/>
+                        <Form-item label="图标:" prop="icon">
+                            <Input v-model="menuModify.icon" style="width: 204px"/>
                         </Form-item>
                     </Col>
                 </Row>
+                <Form-item label="描述:" prop="remark">
+                     <Input v-model="menuModify.remark" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
+                </Form-item>
             </Form>
-        </Modal> -->
+        </Modal>
     </div>
 </template>
 <script>
@@ -155,44 +163,72 @@
                     icon:null
                 },
                 /*新建验证*/
-                ruleNodeNew:{
+                ruleNew:{
                     name: [
-                        { type:'string',required: true, message: '输入用户民', trigger: 'blur' }
+                        { type:'string',required: true, message: '输入菜单名', trigger: 'blur' }
                     ],
                     url: [
-                        { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
+                        { type:'string',required: true, message: '输入路径', trigger: 'blur' }
                     ],
                     parentId: [
                         { required: true, message: '输入父类ID', trigger: 'blur' },
-                        { type:'number', message: '输入数字', trigger: 'blur' }
+                        {validator(rule, value, callback) {
+                            if (!Number.isInteger(+value)) {
+                                callback(new Error('请输入数字'));
+                            } else {
+                                callback();
+                            }
+                          
+                        }, trigger: 'blur'}
                     ],
                     sort: [
-                        /*{ required: true, message: '输入排序', trigger: 'blur' },*/
-                        { type:'number', message: '输入数字', trigger: 'blur' }
+                        { required: true, message: '输入排序', trigger: 'blur' },
+                        {validator(rule, value, callback) {
+                            if (!Number.isInteger(+value)) {
+                                callback(new Error('请输入数字'));
+                            } else {
+                                callback();
+                            }
+                          
+                        }, trigger: 'blur'}
                     ],
                     icon: [
                         { type:'string',required: true, message: '输入图标', trigger: 'blur' }
-                    ],
-
-                    remark: [
-                        { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
                     ]
                 },
                 /*修改验证*/
-                ruleNodeModify:{
-                    /*name: [
-                        { type:'string',required: true, message: '输入用户民', trigger: 'blur' }
+                ruleModify:{
+                    name: [
+                        { type:'string',required: true, message: '输入菜单名', trigger: 'blur' }
                     ],
-                    loginName: [
-                        { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
+                    url: [
+                        { type:'string',required: true, message: '输入路径', trigger: 'blur' }
                     ],
-                    password: [
-                        { type:'string',required: true, message: '输入密码', trigger: 'blur' }
+                    parentId: [
+                        { required: true, message: '输入父类ID', trigger: 'blur' },
+                        {validator(rule, value, callback) {
+                            if (!Number.isInteger(+value)) {
+                                callback(new Error('请输入数字'));
+                            } else {
+                                callback();
+                            }
+                          
+                        }, trigger: 'blur'}
                     ],
-                    email: [
-                        { required: true, message: '输入邮箱', trigger: 'blur' },
-                        { type:'email', message: '输入正确的邮箱格式', trigger: 'blur' }
-                    ]*/
+                    sort: [
+                        { required: true, message: '输入排序', trigger: 'blur' },
+                        {validator(rule, value, callback) {
+                            if (!Number.isInteger(+value)) {
+                                callback(new Error('请输入数字'));
+                            } else {
+                                callback();
+                            }
+                          
+                        }, trigger: 'blur'}
+                    ],
+                    icon: [
+                        { type:'string',required: true, message: '输入图标', trigger: 'blur' }
+                    ]
                 },
                 /*菜单列表*/
                 menuList:[],
@@ -226,10 +262,6 @@
                     {
                         title: '图标',
                         key: 'icon'
-                    },
-                    {
-                        title: ' ',      
-                        width: '20'
                     }
                 ],
                 /*生产类型表数据*/
@@ -321,8 +353,8 @@
                 this.menuModify.id = e.id;
                 this.menuModify.name = e.name;
                 this.menuModify.url = e.url;
-                this.menuModify.parentId = e.parentId;
-                this.menuModify.sort = e.sort;
+                this.menuModify.parentId = e.parentId+'';
+                this.menuModify.sort = e.sort+'';
                 this.menuModify.remark = e.remark;
                 this.menuModify.icon = e.icon;
             },
@@ -368,36 +400,27 @@
                 this.groupId = null;
             },
             /*新建modal的newOk点击事件*/
-            newOk (userNew) { 
-                this.$refs[userNew].validate((valid) => {
+            newOk (menuNew) { 
+                this.$refs[menuNew].validate((valid) => {
                     if (valid) {
-                        if(this.userNew.password == this.userNew.passwordAgain){
-                            this.initUser();
-                            this.userSet(this.userNew);
-                            this.axios({
-                                method: 'post',
-                                url: '/users/user',
-                                data: this.user
-                            }).then(function (response) {
-                                this.initUserNew();
-                                this.getTable({
-                                    "pageInfo":this.pageInfo,
-                                    'menuId':this.menuId
-                                });
-                                this.$Message.info('新建成功');
-                            }.bind(this)).catch(function (error) {
-                                alert(error);
-                            });  
-                            this.newModal = false;
-                        }else{
-                            this.$Message.error('两次输入的密码不相同！');
-                            this.loading = false;
-                            this.$nextTick(() => {
-                                this.loading = true;
+                        this.initMenu();
+                        this.menuSet(this.menuNew);
+                        this.axios({
+                            method: 'post',
+                            url: '/menus/menu',
+                            data: this.menu
+                        }).then(function (response) {
+                            this.initMenuNew();
+                            this.getTable({
+                                "pageInfo":this.pageInfo,
+                                'menuId':this.menuId
                             });
-                        }
+                            this.$Message.info('新建成功');
+                        }.bind(this)).catch(function (error) {
+                            alert(error);
+                        });  
+                        this.newModal = false;
                     }else {
-                        this.$Message.error('表单验证失败!');
                         setTimeout(() => {
                             this.loading = false;
                             this.$nextTick(() => {
@@ -417,17 +440,17 @@
                 }
             },
             /*修改modal的modifyOk点击事件*/
-             modifyOk (userModify) { 
-                this.$refs[userModify].validate((valid) => {
+             modifyOk (menuModify) { 
+                this.$refs[menuModify].validate((valid) => {
                     if (valid) {
-                        this.initUser();
-                        this.userSet(this.userModify);
+                        this.initMenu();
+                        this.menuSet(this.menuModify);
                         this.axios({
                           method: 'put',
-                          url: '/users/'+this.user.id,
-                          data: this.user
+                          url: '/menus/'+this.menu.id,
+                          data: this.menu
                         }).then(function (response) {
-                            this.initUserNew();
+                            this.initMenuNew();
                             this.getTable({
                                 "pageInfo":this.pageInfo,
                                 'menuId':this.menuId
@@ -455,7 +478,7 @@
             /*table选择后触发事件*/
             change(e){
                 if(e.length==1){
-                    this.userModifySet(e['0']);
+                    this.menuModifySet(e['0']);
                 }
                 this.setGroupId(e);              
             },
@@ -472,7 +495,7 @@
                 if(this.groupId!=null && this.groupId!=""){
                     this.axios({
                       method: 'delete',
-                      url: '/users',
+                      url: '/menus',
                       data: this.groupId
                     }).then(function (response) {
                         this.getTable({
@@ -489,8 +512,9 @@
             },
             /*表格中双击事件*/
             dblclick(e){
-                this.userModifySet(e);
+                this.menuModifySet(e);
                 this.modifyModal = true;
+                this.data1.sort();
             }
         }
     }

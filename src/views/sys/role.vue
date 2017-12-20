@@ -1,13 +1,5 @@
 <template>
-	<div style="margin: 20px;">
-        <div>
-            <Row style="margin-bottom: 25px;">
-                <Col span="8">登录名：
-                	<Input v-model="loginName" placeholder="请输入..." style="width:200px"></Input>
-                </Col>
-                <Col span="8"><Button type="primary" shape="circle" icon="ios-search" @click="search()">搜索</Button></Col>
-            </Row>
-        </div>            
+    <div style="margin: 20px;">
         <div>
             <ul>
                 <li>
@@ -17,7 +9,7 @@
                 </li>
                 <li>
                     <div style="padding: 10px 0;">
-                    	<Table :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
+                        <Table border :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
                     </div> 
                 </li>
                 <li>
@@ -28,258 +20,239 @@
             </ul>
         </div>
         <!--添加modal-->  
-        <Modal :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('userNew')" @on-cancel="cancel()">
-            <Form ref="userNew" :model="userNew" :rules="ruleNodeNew" :label-width="80" >
-                <Row>
-                    <Col span="12">
-                        <Form-item label="登录名:" prop="loginName">
-                            <Input v-model="userNew.loginName" style="width: 204px"/>
+        <Modal :mask-closable="false" :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('roleNew')" @on-cancel="cancel()">
+            <Form ref="roleNew" :model="roleNew" :rules="ruleNew" :label-width="80" >
+                <Form-item label="角色名:" prop="name">
+                            <Input v-model="roleNew.name" style="width: 204px"/>
                         </Form-item>
-                    </Col>
-                    <Col span="12">
-                        <Form-item label="用户名:" prop="name">
-                            <Input v-model="userNew.name" style="width: 204px"/>
-                        </Form-item>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span="12">
-                        <Form-item label="密码:" prop="password">
-                            <Input v-model="userNew.password" type="password" style="width: 204px"/>
-                        </Form-item>
-                    </Col>
-                    <Col span="12">
-                        <Form-item label="确认密码:" prop="passwordAgain">
-                            <Input v-model="userNew.passwordAgain" type="password" style="width: 204px"/>
-                        </Form-item>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span="12">
-                        <Form-item label="邮箱:" prop="email">
-                            <Input v-model="userNew.email" style="width: 204px"/>
-                        </Form-item>
-                    </Col>
-                </Row>
+                <Form-item label="描述:" prop="describe">
+                     <Input v-model="roleNew.describe" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
+                </Form-item>
             </Form>
         </Modal>
         <!--修改modal-->  
-        <Modal :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('userModify')" @on-cancel="cancel()">
-             <Form ref="userModify" :model="userModify" :rules="ruleNodeModify" :label-width="80" >
-                <Row>
-                    <Col span="12">
-                        <Form-item label="登录名:" prop="loginName">
-                            <Input v-model="userModify.loginName" style="width: 204px"/>
+        <Modal :mask-closable="false" :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('roleModify')" @on-cancel="cancel()">
+            <Form ref="roleModify" :model="roleModify" :rules="ruleModify" :label-width="80" >
+                <Form-item label="角色名:" prop="name">
+                            <Input v-model="roleModify.name" style="width: 204px"/>
                         </Form-item>
-                    </Col>
-                    <Col span="12">
-                        <Form-item label="用户名:" prop="name">
-                            <Input v-model="userModify.name" style="width: 204px"/>
-                        </Form-item>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span="12">
-                        <Form-item label="密码:" prop="password">
-                            <Input v-model="userModify.password" type="password" style="width: 204px"/>
-                        </Form-item>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span="12">
-                        <Form-item label="邮箱:" prop="email">
-                            <Input v-model="userModify.email" style="width: 204px"/>
-                        </Form-item>
-                    </Col>
-                </Row>
+                <Form-item label="描述:" prop="describe">
+                     <Input v-model="roleModify.describe" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
+                </Form-item>
             </Form>
+        </Modal>
+        <!-- 配置权限 -->
+        <Modal v-model="settingModal"  width="400" title="配置权限" @on-ok="settingOk()" @on-cancel="cancel()" :mask-closable="false">
+            <Row>
+                <Col span="24"><Table border :columns="columns2" :data="data2"></Table></Col>
+            </Row>
         </Modal>
     </div>
 </template>
 <script>
-	export default {
+    export default {
         data () {
             return {
-                /*用于查找的品牌名称*/
-                loginName:null,
-            	/*选择的数量*/
+                /*选择的数量*/
                 count:null,
-            	/*选中的组数据*/
+                /*选中的组数据*/
                 groupId:null,
-            	/*新建modal的显示参数*/
+                /*新建modal的显示参数*/
                 newModal:false,
                 /*修改modal的显示参数*/
                 modifyModal:false,
-            	/*分页total属性绑定值*/
+                /*权限modal的显示参数*/
+                settingModal:false,
+                /*分页total属性绑定值*/
                 total:0,
                 /*loading*/
                 loading: true,
                 /*pageInfo实体*/
                 pageInfo:{
-                	page:0,
-                	pageSize:10
+                    page:0,
+                    pageSize:10
                 },
-                /*user实体*/
-                user:{
+                /*role实体*/
+                role:{                             
                     id:null,
                     name:null,
-                    loginName:null,
-                    password:null,
-                    passwordAgain:null,
-                    email:null
+                    modules:null,
+                    describe:null
                 },
-                /*用于添加的user实体*/
-                userNew:{
-                	id:null,
-					name:null,
-					loginName:null,
-					password:null,
-                    passwordAgain:null,
-					email:null
+                /*用于添加的role实体*/
+                roleNew:{
+                    id:null,
+                    name:null,
+                    modules:null,
+                    describe:null
                 },
-                /*用于修改的user实体*/
-                userModify:{
-                	id:null,
-					name:null,
-					loginName:null,
-					password:null,
-					email:null
+                /*用于修改的role实体*/
+                roleModify:{
+                    id:null,
+                    name:null,
+                    modules:null,
+                    describe:null
                 },
                 /*新建验证*/
-                ruleNodeNew:{
+                ruleNew:{
                     name: [
-                        { type:'string',required: true, message: '输入用户民', trigger: 'blur' }
-                    ],
-                    loginName: [
-                        { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
-                    ],
-                    password: [
-                        { type:'string',required: true, message: '输入密码', trigger: 'blur' }
-                    ],
-                    passwordAgain: [
-                        { type:'string',required: true, message: '输入再次密码', trigger: 'blur' }
-                    ],
-                    email: [
-                        { required: true, message: '输入邮箱', trigger: 'blur' },
-                        { type:'email', message: '输入正确的邮箱格式', trigger: 'blur' }
+                        { type:'string',required: true, message: '输入角色名', trigger: 'blur' }
                     ]
                 },
                 /*修改验证*/
-                ruleNodeModify:{
+                ruleModify:{
                     name: [
-                        { type:'string',required: true, message: '输入用户民', trigger: 'blur' }
-                    ],
-                    loginName: [
-                        { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
-                    ],
-                    password: [
-                        { type:'string',required: true, message: '输入密码', trigger: 'blur' }
-                    ],
-                    email: [
-                        { required: true, message: '输入邮箱', trigger: 'blur' },
-                        { type:'email', message: '输入正确的邮箱格式', trigger: 'blur' }
+                        { type:'string',required: true, message: '输入角色名', trigger: 'blur' }
                     ]
                 },
-            	/*生产类型表显示字段*/
-            	columns1: [
+                /*表显示字段*/
+                columns1: [
                     {
                         type: 'selection',
                         width: 60,
                         align: 'center'
                     },
                     {
-                        title: '登录名',
-                        key: 'loginName'
-                    },
-                    {
-                        title: '用户名',
+                        title: '角色名',
                         key: 'name'
                     },
                     {
-                        title: '邮箱',
-                        key: 'email'
+                        title: '描述',
+                        key: 'describe'
                     },
-                    {
-                        title: ' ',      
-                        width: '20'
+                    {   title: '操作', 
+                        key: 'action', 
+                        width: 180, 
+                        align: 'center', 
+                        render: (h, params) => { 
+                            return h('div', [ h('Button', 
+                                { 
+                                    props: { icon:'gear-b' },
+                                    style: {border:'none',background:'none' }, 
+                                    on: { 
+                                        click: () => { 
+                                            this.setting(params.row);
+                                        } 
+                                    } 
+                                }, ) 
+                            ]); 
+                        } 
                     }
                 ],
-                /*生产类型表数据*/
-                data1: []
+                /*表数据*/
+                data1: [],
+                /*表显示字段*/
+                columns2: [
+                    {
+                        title: '权限',
+                        key: 'name'
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div',[
+                                h('i-switch',{
+                                    attrs:{
+                                        'value' : params.row.value 
+                                    },
+                                    on:{
+                                        'on-change':(val)=>{
+                                            var i = this.moduleArr.indexOf(params.row.id+'');
+                                            if(val){
+                                                if(i == -1){
+                                                    this.moduleArr.push(params.row.id+'');
+                                                }
+                                            }else{
+                                                if(i != -1){
+                                                    this.moduleArr.splice(i,1);
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                            ]);
+                        }
+                    }
+                ],
+                /*表数据*/
+                data2: [],
+                /*临时存储权限的数组*/
+                moduleArr:[],
+                /*二级菜单列表*/
+                submenusList:[]
             }
         },
         mounted(){
-        	/*页面初始化调用方法*/
+            /*页面初始化调用方法*/
             this.getTable({
-                "pageInfo":this.pageInfo,
-                "loginName":this.loginName
+                "pageInfo":this.pageInfo
+            });
+            this.axios({
+              method: 'get',
+              url: '/menus/submenus'
+            }).then(function (response) {
+                this.submenusList = response.data;
+            }.bind(this)).catch(function (error) {
+              alert(error);
             });
         },
         methods:{
-        	/*pageInfo实体初始化*/
-        	initPageInfo(){
-        		this.pageInfo.page = 0;
-        		this.pageInfo.pageSize = 10;
-        	},
-            /*user实体初始化*/
-            initUser(){
-                this.user.id = null;
-                this.user.name = null;
-                this.user.loginName = null;
-                this.user.password = null;
-                this.user.email = null;
+            /*pageInfo实体初始化*/
+            initPageInfo(){
+                this.pageInfo.page = 0;
+                this.pageInfo.pageSize = 10;
             },
-            /*userNew实体初始化*/
-            initUserNew(){
-                this.userNew.id = null;
-                this.userNew.name = null;
-                this.userNew.loginName = null;
-                this.userNew.password = null;
-                this.userNew.passwordAgain = null;
-                this.userNew.email = null;
+            /*role实体初始化*/
+            initRole(){
+                this.role.id = null;
+                this.role.name = null;
+                this.role.modules = null;
+                this.role.describe = null;
             },
-            /*userModify实体初始化*/
-            initUserModify(){
-                this.userModify.id = null;
-                this.userModify.name = null;
-                this.userModify.loginName = null;
-                this.userModify.password = null;
-                this.userModify.email = null;
+            /*roleNew实体初始化*/
+            initRoleNew(){
+                this.roleNew.id = null;
+                this.roleNew.name = null;
+                this.roleNew.modules = null;
+                this.roleNew.describe = null;
             },
-            /*userNew设置*/
-            userSet(e){
-                this.user.id = e.id;
-                this.user.name = e.name;
-                this.user.loginName = e.loginName;
-                this.user.password = e.password;
-                this.user.email = e.email;
+            /*roleModify实体初始化*/
+            initRoleModify(){
+                this.roleModify.id = null;
+                this.roleModify.name = null;
+                this.roleModify.modules = null;
+                this.roleModify.describe = null;
             },
-            /*userNew设置*/
-            userNewSet(e){
-                this.userNew.id = e.id;
-                this.userNew.name = e.name;
-                this.userNew.loginName = e.loginName;
-                this.userNew.password = e.password;
-                this.userNew.passwordAgain = e.password;
-                this.userNew.email = e.email;
+            /*roleNew设置*/
+            roleSet(e){
+                this.role.id = e.id;
+                this.role.name = e.name;
+                this.role.modules = e.modules;
+                this.role.describe = e.describe;
             },
-            /*userModify设置*/
-            userModifySet(e){
-                this.userModify.id = e.id;
-                this.userModify.name = e.name;
-                this.userModify.loginName = e.loginName;
-                this.userModify.password = e.password;
-                this.userModify.email = e.email;
+            /*roleNew设置*/
+            roleNewSet(e){
+                this.roleNew.id = e.id;
+                this.roleNew.name = e.name;
+                this.roleNew.modules = e.modules;
+                this.roleNew.describe = e.describe;
+            },
+            /*roleModify设置*/
+            roleModifySet(e){
+                this.roleModify.id = e.id;
+                this.roleModify.name = e.name;
+                this.roleModify.modules = e.modules;
+                this.roleModify.describe = e.describe;
             },
             /*得到表数据*/
             getTable(e) {
                 this.axios({
                   method: 'get',
-                  url: '/users',
+                  url: '/roles',
                   params: {
                     'page':e.pageInfo.page,
-                    'pageSize':e.pageInfo.pageSize,
-                    'loginName':e.loginName
+                    'pageSize':e.pageInfo.pageSize
                   }
                 }).then(function (response) {
                     this.data1=response.data.data;
@@ -288,61 +261,42 @@
                   alert(error);
                 });
             },
-            /*搜索按钮点击事件*/
-            search(){
-                this.initPageInfo();
-                this.getTable({
-                    "pageInfo":this.pageInfo,
-                    "loginName":this.loginName
-                });   
-            },
             /*分页点击事件*/
             pageSearch(e){
                 this.pageInfo.page = e-1;
                 this.getTable({  
-                    "pageInfo":this.pageInfo,
-                    "loginName":this.loginName
+                    "pageInfo":this.pageInfo
                 });
             },
             /*新建点击触发事件*/
             openNewModal(){
                 this.newModal = true;
-                this.initUserNew();
+                this.initRoleNew();
                 this.data1.sort();
                 this.count = 0;
                 this.groupId = null;
             },
             /*新建modal的newOk点击事件*/
-            newOk (userNew) { 
-                this.$refs[userNew].validate((valid) => {
+            newOk (roleNew) { 
+                this.$refs[roleNew].validate((valid) => {
                     if (valid) {
-                        if(this.userNew.password == this.userNew.passwordAgain){
-                            this.initUser();
-                            this.userSet(this.userNew);
-                            this.axios({
-                                method: 'post',
-                                url: '/users/user',
-                                data: this.user
-                            }).then(function (response) {
-                                this.initUserNew();
-                                this.getTable({
-                                    "pageInfo":this.pageInfo,
-                                    "loginName":this.loginName
-                                });
-                                this.$Message.info('新建成功');
-                            }.bind(this)).catch(function (error) {
-                                alert(error);
-                            });  
-                            this.newModal = false;
-                        }else{
-                            this.$Message.error('两次输入的密码不相同！');
-                            this.loading = false;
-                            this.$nextTick(() => {
-                                this.loading = true;
+                        this.initRole();
+                        this.roleSet(this.roleNew);
+                        this.axios({
+                            method: 'post',
+                            url: '/roles/role',
+                            data: this.role
+                        }).then(function (response) {
+                            this.initRoleNew();
+                            this.getTable({
+                                "pageInfo":this.pageInfo
                             });
-                        }
+                            this.$Message.info('新建成功');
+                        }.bind(this)).catch(function (error) {
+                            alert(error);
+                        });  
+                        this.newModal = false;
                     }else {
-                        this.$Message.error('表单验证失败!');
                         setTimeout(() => {
                             this.loading = false;
                             this.$nextTick(() => {
@@ -362,20 +316,22 @@
                 }
             },
             /*修改modal的modifyOk点击事件*/
-             modifyOk (userModify) { 
-                this.$refs[userModify].validate((valid) => {
+             modifyOk (roleModify) { 
+                console.log("1");
+                this.$refs[roleModify].validate((valid) => {
+                    console.log("2");
                     if (valid) {
-                        this.initUser();
-                        this.userSet(this.userModify);
+                        console.log("3");
+                        this.initRole();
+                        this.roleSet(this.roleModify);
                         this.axios({
                           method: 'put',
-                          url: '/users/'+this.user.id,
-                          data: this.user
+                          url: '/roles/'+this.role.id,
+                          data: this.role
                         }).then(function (response) {
-                            this.initUserNew();
+                            this.initRoleNew();
                             this.getTable({
-                                "pageInfo":this.pageInfo,
-                                "loginName":this.loginName
+                                "pageInfo":this.pageInfo
                             });
                             this.$Message.info('修改成功');
                         }.bind(this)).catch(function (error) {
@@ -383,6 +339,7 @@
                         });  
                         this.modifyModal = false;
                     }else {
+                        console.log("4");
                         this.$Message.error('表单验证失败!');
                         setTimeout(() => {
                             this.loading = false;
@@ -393,6 +350,34 @@
                     }
                 })
             },
+            /*表格中按钮点击事件*/
+            setting(e){
+                this.data1.sort();
+                this.settingModal = true;
+                this.roleModifySet(e);
+                this.moduleArr = e.modules.split(";");
+                var data2Temp = [];
+                for (var i = 0; i < this.submenusList.length; i++) {
+                    if(this.moduleArr.indexOf(this.submenusList[i].id+'') == -1){
+                        data2Temp.push({
+                            'id': this.submenusList[i].id,
+                            'name': this.submenusList[i].name,
+                            'value': false
+                        });
+                    }else{
+                        data2Temp.push({
+                            'id': this.submenusList[i].id,
+                            'name': this.submenusList[i].name,
+                            'value': true
+                        });
+                    }
+                }
+                this.data2 = data2Temp;
+            },
+            /*配置权限的settingOk点击事件*/
+            settingOk(){
+                console.log(this.moduleArr);
+            },
             /*modal的cancel点击事件*/
             cancel () {
                 this.$Message.info('点击了取消');
@@ -400,7 +385,7 @@
             /*table选择后触发事件*/
             change(e){
                 if(e.length==1){
-                    this.userModifySet(e['0']);
+                    this.roleModifySet(e['0']);
                 }
                 this.setGroupId(e);              
             },
@@ -417,12 +402,11 @@
                 if(this.groupId!=null && this.groupId!=""){
                     this.axios({
                       method: 'delete',
-                      url: '/users',
+                      url: '/roles',
                       data: this.groupId
                     }).then(function (response) {
                         this.getTable({
-                            "pageInfo":this.pageInfo,
-                            "loginName":this.loginName
+                            "pageInfo":this.pageInfo
                         });
                         this.groupId=null;
                         this.count=0;
@@ -434,8 +418,9 @@
             },
             /*表格中双击事件*/
             dblclick(e){
-                this.userModifySet(e);
+                this.roleModifySet(e);
                 this.modifyModal = true;
+                this.data1.sort();
             }
         }
     }

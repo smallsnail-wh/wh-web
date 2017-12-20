@@ -16,6 +16,7 @@
     .layout-content{
         /*height: 80%;*/
         /*min-height: 100%;*/
+        min-height: 200px;
         margin: 15px;
         overflow: hidden;
         background: #f8f8f9;

@@ -3,7 +3,7 @@
         <div>
             <Row style="margin-bottom: 25px;">
                 <Col span="8">登录名：
-                	<Input v-model="loginName" placeholder="请输入..." style="width:250px"></Input>
+                	<Input v-model="loginName" placeholder="请输入..." style="width:200px"></Input>
                 </Col>
                 <Col span="8"><Button type="primary" shape="circle" icon="ios-search" @click="search()">搜索</Button></Col>
             </Row>
@@ -17,7 +17,7 @@
                 </li>
                 <li>
                     <div style="padding: 10px 0;">
-                    	<Table :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
+                    	<Table border :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
                     </div> 
                 </li>
                 <li>
@@ -28,8 +28,8 @@
             </ul>
         </div>
         <!--添加modal-->  
-        <Modal :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('userNew')" @on-cancel="cancel()">
-            <Form ref="userNew" :model="userNew" :rules="ruleNodeNew" :label-width="80" >
+        <Modal :mask-closable="false" :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('userNew')" @on-cancel="cancel()">
+            <Form ref="userNew" :model="userNew" :rules="ruleNew" :label-width="80" >
                 <Row>
                     <Col span="12">
                         <Form-item label="登录名:" prop="loginName">
@@ -64,8 +64,8 @@
             </Form>
         </Modal>
         <!--修改modal-->  
-        <Modal :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('userModify')" @on-cancel="cancel()">
-             <Form ref="userModify" :model="userModify" :rules="ruleNodeModify" :label-width="80" >
+        <Modal :mask-closable="false" :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('userModify')" @on-cancel="cancel()">
+             <Form ref="userModify" :model="userModify" :rules="ruleModify" :label-width="80" >
                 <Row>
                     <Col span="12">
                         <Form-item label="登录名:" prop="loginName">
@@ -146,9 +146,9 @@
 					email:null
                 },
                 /*新建验证*/
-                ruleNodeNew:{
+                ruleNew:{
                     name: [
-                        { type:'string',required: true, message: '输入用户民', trigger: 'blur' }
+                        { type:'string',required: true, message: '输入用户名', trigger: 'blur' }
                     ],
                     loginName: [
                         { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
@@ -165,9 +165,9 @@
                     ]
                 },
                 /*修改验证*/
-                ruleNodeModify:{
+                ruleModify:{
                     name: [
-                        { type:'string',required: true, message: '输入用户民', trigger: 'blur' }
+                        { type:'string',required: true, message: '输入用户名', trigger: 'blur' }
                     ],
                     loginName: [
                         { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
@@ -198,10 +198,6 @@
                     {
                         title: '邮箱',
                         key: 'email'
-                    },
-                    {
-                        title: ' ',      
-                        width: '20'
                     }
                 ],
                 /*生产类型表数据*/
@@ -436,6 +432,7 @@
             dblclick(e){
                 this.userModifySet(e);
                 this.modifyModal = true;
+                this.data1.sort();
             }
         }
     }
