@@ -351,7 +351,11 @@
                 this.data1.sort();
                 this.settingModal = true;
                 this.roleModifySet(e);
-                this.moduleArr = e.modules.split(";");
+                if(e.modules == null || e.modules == ''){
+                    this.moduleArr = [];
+                }else{
+                    this.moduleArr = e.modules.split(";");
+                }
                 var data2Temp = [];
                 for (var i = 0; i < this.submenusList.length; i++) {
                     if(this.moduleArr.indexOf(this.submenusList[i].id+'') == -1){
@@ -394,7 +398,6 @@
                 }.bind(this)).catch(function (error) {
                   alert(error);
                 });
-                console.log(this.roleModify);
             },
             /*modal的cancel点击事件*/
             cancel () {

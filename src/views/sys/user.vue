@@ -95,7 +95,7 @@
             </Form>
         </Modal>
         <!--配置角色modal-->  
-        <Modal v-model="roleModal" width="800" title="角色配置" @on-ok="roleOk()" @on-cancel="cancel()">
+        <Modal v-model="roleModal" width="500" title="角色配置" @on-ok="roleOk()" @on-cancel="cancel()">
             <div>
                 <Table border :columns="columns2" :data="data2" :height="260"  @on-selection-change="s=>{change2(s)}"></Table>
             </div>
@@ -106,8 +106,6 @@
 	export default {
         data () {
             return {
-                /*用户与角色关系列表*/
-                relationList:null,
                 /*用于查找的登录名*/
                 loginName:null,
             	/*选择的数量*/
@@ -240,6 +238,7 @@
                     },
                     {
                         title: '角色名称',
+                        width: 120,
                         key: 'name'
                     },
                     {
@@ -248,7 +247,11 @@
                     }
                 ],
                 /*表数据*/
-                data2: []
+                data2:[],
+                /*data2的临时存储*/
+                data2Temp:[],
+                /*用户与角色关系列表*/
+                relationList:null
             }
         },
         mounted(){
@@ -261,8 +264,7 @@
               method: 'get',
               url: '/roles/all'
             }).then(function (response) {
-                this.data2 = response.data;
-                console.log(response);
+                this.data2Temp = response.data;
             }.bind(this)).catch(function (error) {
               alert(error);
             });
@@ -493,42 +495,68 @@
             /*流程配置*/
             relationSet(e){
                 this.roleModal = true;
+                this.data2 = [];
                 this.axios({
                   method: 'get',
                   url: '/relations/'+e.id
                 }).then(function (response) {
-                    console.log(response);    
+                    var roleList = [];
+                    for(var i in response.data){
+                        roleList.push(response.data[i].roleId);
+                    }
+                    for(var i in this.data2Temp){
+                        if(roleList.indexOf(this.data2Temp[i].id) == -1){
+                            this.data2.push({
+                                "id": this.data2Temp[i].id,
+                                "name": this.data2Temp[i].name,
+                                "describe": this.data2Temp[i].describe,
+                                "userId": e.id,
+                                "_checked": false
+                            });
+                        }else {
+                            this.data2.push({
+                                "id": this.data2Temp[i].id,
+                                "name": this.data2Temp[i].name,
+                                "describe": this.data2Temp[i].describe,
+                                "userId": e.id,
+                                "_checked": true
+                            });
+                        }
+                    }   
                 }.bind(this)).catch(function (error) {
                   alert(error);
                 });
-
-                /*this.initPdtMap();
-                this.data2=[];
-                this.product.pdtId = e.row.pdtId;
-                this.product.pdtCode = e.row.pdtCode;
-                this.product.pdtName = e.row.pdtName;
-                this.product.pdtType = e.row.pdtType;
-                this.pdtMap.id = e.row.pdtId;
-                this.pdtMap.type = e.row.pdtType;
-                this.modal = true;
-                this.axios({
-                  method: 'post',
-                  url: '/producing/pdtProcedure!procedureList.do',
-                  data: {
-                    "pdtMap": this.pdtMap
-                  },
-                  dataType:'json'
-                }).then(function (response) {
-                    this.data2=response.data.json.data.data;    
-                }.bind(this)).catch(function (error) {
-                  alert(error);
-                });*/
             },
+            /*配置角色modal确认按钮点击事件*/
             roleOk(){
-
+                if(this.relationList!=null){
+                    console.log(this.relationList);
+                    this.axios({
+                      method: 'post',
+                      url: '/relations',
+                      data: this.relationList
+                    }).then(function (response) {
+                        this.$Message.info('配置成功'); 
+                    }.bind(this)).catch(function (error) {
+                      alert(error);
+                    });
+                    this.relationList = null;
+                }
             },
+            /*配置角色modal中表选择改变事件*/
             change2(e){
-
+                this.relationList = [];
+                if(e.length == 0){
+                    this.relationList.push({
+                        "userId": this.data2[0].userId
+                    }); 
+                }
+                for (var i in e) {
+                    this.relationList.push({
+                        "userId": e[i].userId,
+                        "roleId": e[i].id
+                    });  
+                }
             }
         }
     }
