@@ -530,7 +530,6 @@
             /*配置角色modal确认按钮点击事件*/
             roleOk(){
                 if(this.relationList!=null){
-                    console.log(this.relationList);
                     this.axios({
                       method: 'post',
                       url: '/relations',

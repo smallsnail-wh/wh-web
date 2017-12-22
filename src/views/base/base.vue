@@ -143,7 +143,7 @@
             }).then(function(response){
                 this.userName = response.data.name;
             }.bind(this)).catch(function(error){
-                console.log(error);
+                alert(error);
             });
             this.axios({
                 method: 'get',
@@ -156,7 +156,7 @@
                     }
                 }
             }.bind(this)).catch(function(error){
-                console.log(error);
+                alert(error);
             });
         },
         methods:{
