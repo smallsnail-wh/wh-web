@@ -51,7 +51,7 @@
     }
     .layout-header strong{
         color: #ff5722;
-        font-size:20px;
+        font-size:10px;
     }
     .layout-logo-left{
         width: 90%;
