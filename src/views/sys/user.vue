@@ -21,7 +21,7 @@
                     </div> 
                 </li>
                 <li>
-                    <div style="float:right">
+                    <div style="text-align: right;">
                         <Page :total="total" :page-size="pageInfo.pageSize" show-elevator show-total @on-change="e=>{pageSearch(e)}"></Page>
                     </div>  
                 </li>

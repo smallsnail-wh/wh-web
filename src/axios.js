@@ -34,7 +34,15 @@ axios.interceptors.response.use(
                     router.replace({
                         path: '/',
                         query: {redirect: router.currentRoute.fullPath}
-                    })
+                    });
+                    break;
+                case 403:
+                    // 403 无权限，跳转到首页
+                    router.replace({
+                        path: '/base/welcome',
+                        query: {redirect: router.currentRoute.fullPath}
+                    });
+                    break;
             }
         }
         // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402
