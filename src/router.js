@@ -109,9 +109,10 @@ router.beforeEach((to, from, next) => {
           path: '/',
           query: { redirect: to.fullPath }
         })
-    } else {
+    }/* else {
         next()
-    }
+        console.log("next");
+    }*/
     iView.LoadingBar.start();
     Util.title(to.meta.title);
     next();
