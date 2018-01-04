@@ -9,14 +9,14 @@ const routers = [
 	{
 	    path: '/',
 	    meta: {
-	        title: ''
+	        title: 'smallsnail-wh'
 	    },
 	    component: (resolve) => require(['./views/index.vue'], resolve)
 	},
 	{
 	    path: '/index',
 	    meta: {
-	        title: ''
+	        title: 'smallsnail-wh'
 	    },
 	    component: (resolve) => require(['./views/index.vue'], resolve)
 	},
@@ -103,6 +103,8 @@ const RouterConfig = {
 const router = new VueRouter(RouterConfig);
 
 router.beforeEach((to, from, next) => {
+	console.log(to);
+	console.log(from);
     let token = window.localStorage.getItem('currentUser_token')
     if (to.matched.some(record => record.meta.requiresAuth) && (!token || token === null)) {
         next({
