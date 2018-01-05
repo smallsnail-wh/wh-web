@@ -6,6 +6,10 @@ import Util from './libs/util';
 Vue.use(VueRouter);
 
 const routers = [
+	{ 
+		path: '*', 
+		component: (resolve) => require(['./views/error404.vue'], resolve) 
+	},
 	{
 	    path: '/',
 	    meta: {
