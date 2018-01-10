@@ -2,7 +2,7 @@
 
 项目介绍
 --
-	vue.js+node.js+webpack构建的前端项目，后端用的是我的另一个项目wh-server（前后端分离）。
+vue.js+node.js+webpack构建的前端项目，后端用的是我的另一个项目[wh-server](https://github.com/smallsnail-wh/wh-server)（前后端分离）。
 
 技术栈
 --
