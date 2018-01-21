@@ -7,7 +7,9 @@ vue.js+node.js+webpack构建的前端项目，后端用的是我的另一个项�
 项目展示
 --
 地址：https://smallsnail-wh.github.io
-
+用户名：admin
+密码：admin
+（第一次打开可能会有点慢）
 技术栈
 --
 	
@@ -47,6 +49,5 @@ Http状态码
 	目前以写的异常处理有：
 		1. 401 清除token信息并跳转到登录页面
 		2. 403 无权限，跳转到首页
-	
-	
+		
 
