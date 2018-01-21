@@ -4,6 +4,10 @@
 --
 vue.js+node.js+webpack构建的前端项目，后端用的是我的另一个项目[wh-server](https://github.com/smallsnail-wh/wh-server)（前后端分离）。
 
+项目展示
+--
+地址：https://smallsnail-wh.github.io
+
 技术栈
 --
 	
