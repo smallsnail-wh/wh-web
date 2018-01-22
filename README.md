@@ -51,6 +51,6 @@ Http状态码
 		1. 401 清除token信息并跳转到登录页面
 		2. 403 无权限，跳转到首页
 		
-如果觉得用可以，给个星呗。
+如果觉得可以，给个星呗。
 --
 ![image](https://github.com/smallsnail-wh/wh-web/blob/master/src/images/thank.gif)
