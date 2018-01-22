@@ -53,3 +53,4 @@ Http状态码
 		
 如果觉得用可以，给个星呗。
 --
+![image](https://github.com/smallsnail-wh/wh-web/blob/master/src/images/thank.gif)
