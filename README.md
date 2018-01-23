@@ -42,7 +42,8 @@ UI 组件库：
  - 启动：
 	 1. 命令行进入项目文件夹
 	 2. 运行npm install
-	 3. 运行npm run dev启动前端工程
+	 3. 运行npm run init初始化项目
+	 4. 运行npm run dev启动前端工程
 
 Http状态码
 --
