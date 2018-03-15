@@ -12,7 +12,9 @@ export default new Vuex.Store({
           { id: 1, text: '...', done: true },
           { id: 2, text: '...', done: false }
         ],
-        count: 0
+        count: 0,
+        /*登录界面判断是否显示错误提示*/
+        ifSign: false
     },
     getters: {
         doneTodos: state =>{
@@ -23,6 +25,9 @@ export default new Vuex.Store({
         },
         getTodoById: (state) => (id) => {
             return state.todos.find(todo => todo.id === id)
+        },
+        getSign:state =>{
+            return state.ifSign;
         }
     },
     mutations: {
@@ -31,6 +36,12 @@ export default new Vuex.Store({
         },
         increment(state,number){
             state.count+=number;
+        },
+        setSignTrue(state){
+            state.ifSign = true;
+        },
+        setSignFalse(state){
+            state.ifSign = false;
         }
     },
     actions: {

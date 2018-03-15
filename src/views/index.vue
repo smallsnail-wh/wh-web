@@ -17,6 +17,12 @@
     .wrap_conter li h2{color:#FFFFFF;font-size:20px;line-height:40px; display:block; text-align:center; padding:20px 0 5px 0}
     .pc-hign{height:75px;display: inline-table;}
     .wrap_conter li dl{width:100%;}
+    .name-password-error{
+        padding-bottom: 2px;
+        text-align: left;
+        line-height: 1;
+        color: #ed3f14;
+    }
 </style>
 <template>
     <div class="index">
@@ -26,6 +32,7 @@
                     <ul>
                         <li><h2>用户登录</h2></li>
                         <li>
+                            <div class="name-password-error" v-if="this.$store.state.ifSign">用户名或密码错误</div>
                             <dl>
                                 <FormItem prop="userName" >
                                     <Input v-model="formLogin.userName" type="text" placeholder="登录名" >

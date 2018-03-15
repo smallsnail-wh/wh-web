@@ -47,9 +47,11 @@ export default {
                 /*router.push({path:"base"});*/
                 axios.defaults.headers.common['Authorization'] = 'bearer '+ localStorage.getItem("currentUser_token");
                 router.push({ path: 'base/welcome' }) ;
+                context.commit('setSignFalse',null,{root: true});
                 /*this.$route.router.push({ path: '/base' });*/
             }).catch(function(error){
-                iView.Message.error('用户名或密码错误！');
+                /*iView.Message.error('用户名或密码错误！');*/
+                context.commit('setSignTrue',null,{ root: true});
             });
         },
         loginOUt(context,{router}){
