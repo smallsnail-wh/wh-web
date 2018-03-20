@@ -32,6 +32,13 @@ const routers = [
 	    component: (resolve) => require(['./views/test.vue'], resolve)
 	},
 	{
+	    path: '/authorization',
+	    meta: {
+	        title: 'authorization'
+	    },
+	    component: (resolve) => require(['./views/authorization/code.vue'], resolve)
+	},
+	{
 	    path: '/base',
 	    meta: {
 	        title: 'base',
@@ -107,8 +114,7 @@ const RouterConfig = {
 const router = new VueRouter(RouterConfig);
 
 router.beforeEach((to, from, next) => {
-	console.log(to);
-	console.log(from);
+
     let token = window.localStorage.getItem('currentUser_token')
     if (to.matched.some(record => record.meta.requiresAuth) && (!token || token === null)) {
         next({
